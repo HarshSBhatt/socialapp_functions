@@ -17,6 +17,7 @@ const {
 } = require("./handlers/screams");
 const {
   signUp,
+  resendVerificationMail,
   login,
   uploadImage,
   addUserDetails,
@@ -51,6 +52,7 @@ app
   .get(authenticate, getAuthenticatedUser)
   .post(authenticate, addUserDetails);
 
+app.route("/resendVerificationMail").post(authenticate, resendVerificationMail);
 app.route("/user/:handle").get(getOtherUserDetail);
 app.route("/notifications").post(authenticate, markNotificationRead);
 

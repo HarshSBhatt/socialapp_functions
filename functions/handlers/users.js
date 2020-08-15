@@ -62,6 +62,13 @@ exports.signUp = (req, res) => {
       db.doc(`/users/${newUser.handle}`).set(userCredentials);
     })
     .then(() => {
+      const user = firebase.auth().currentUser;
+      return user.sendEmailVerification();
+    })
+    .then(() => {
+      console.log("Email sent");
+    })
+    .then(() => {
       return res.status(201).json({ token });
     })
     .catch((err) => {
@@ -71,6 +78,20 @@ exports.signUp = (req, res) => {
       return res
         .status(500)
         .json({ general: "Something went wrong, please try again later!" });
+    });
+};
+
+// //! Send verification mail again
+
+exports.resendVerificationMail = (req, res) => {
+  const user = firebase.auth().currentUser;
+  user
+    .sendEmailVerification()
+    .then((data) => {
+      return res.json({ success: true, err: null });
+    })
+    .catch((error) => {
+      return res.json({ success: false, err: error.message });
     });
 };
 
