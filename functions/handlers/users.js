@@ -12,6 +12,7 @@ const {
   validateSignupData,
   reduceUserDetails,
 } = require("../utils/validators");
+const { isEmail } = require("../utils/is-email");
 
 firebase.initializeApp(firebaseConfig);
 
@@ -66,9 +67,6 @@ exports.signUp = (req, res) => {
       return user.sendEmailVerification();
     })
     .then(() => {
-      console.log("Email sent");
-    })
-    .then(() => {
       return res.status(201).json({ token });
     })
     .catch((err) => {
@@ -87,7 +85,7 @@ exports.resendVerificationMail = (req, res) => {
   const user = firebase.auth().currentUser;
   user
     .sendEmailVerification()
-    .then((data) => {
+    .then(() => {
       return res.json({ success: true, err: null });
     })
     .catch((error) => {
@@ -109,6 +107,17 @@ exports.login = (req, res) => {
     return res.status(400).json(errors);
   }
 
+  // const persistence = req.body.remember
+  //   ? firebase.auth.Auth.Persistence.LOCAL
+  //   : firebase.auth.Auth.Persistence.SESSION;
+  // firebase
+  // .auth()
+  // .setPersistence(persistence)
+  // .then(() => {
+  //   return firebase
+  //     .auth()
+  //     .signInWithEmailAndPassword(user.email, user.password);
+  // })
   firebase
     .auth()
     .signInWithEmailAndPassword(user.email, user.password)
@@ -121,6 +130,24 @@ exports.login = (req, res) => {
     .catch((err) => {
       console.error(err);
       return res.status(403).json({ general: "Wrong credentials" });
+    });
+};
+
+//! Forgot password
+
+exports.recoverPassword = (req, res) => {
+  const { email } = req.body;
+  if (!isEmail(email)) {
+    return res.status(400).json({ error: "Must be an email" });
+  }
+  firebase
+    .auth()
+    .sendPasswordResetEmail(email)
+    .then(() => {
+      return res.json({ success: true, err: null });
+    })
+    .catch((error) => {
+      return res.json({ success: false, err: error.message });
     });
 };
 
@@ -219,7 +246,6 @@ exports.getAuthenticatedUser = (req, res) => {
 //! Upload a profile image for user
 
 exports.uploadImage = (req, res) => {
-  console.log("Header: ", req.headers);
   const busboy = new BusBoy({ headers: req.headers });
 
   let imageFileName;

@@ -18,6 +18,7 @@ const {
 const {
   signUp,
   resendVerificationMail,
+  recoverPassword,
   login,
   uploadImage,
   addUserDetails,
@@ -53,6 +54,7 @@ app
   .post(authenticate, addUserDetails);
 
 app.route("/resendVerificationMail").post(authenticate, resendVerificationMail);
+app.route("/recoverPassword").post(recoverPassword);
 app.route("/user/:handle").get(getOtherUserDetail);
 app.route("/notifications").post(authenticate, markNotificationRead);
 
