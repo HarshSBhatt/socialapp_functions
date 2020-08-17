@@ -122,6 +122,7 @@ exports.commentOnScream = (req, res) => {
     screamId: req.params.screamId,
     userHandle: req.user.handle,
     userImage: req.user.imageUrl,
+    isVerified: req.user.isVerified,
   };
 
   db.doc(`/screams/${req.params.screamId}`)

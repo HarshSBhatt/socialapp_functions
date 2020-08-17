@@ -3,6 +3,7 @@
 
 const functions = require("firebase-functions");
 const express = require("express");
+const cors = require("cors");
 
 const authenticate = require("./utils/authenticate");
 const { db } = require("./utils/admin");
@@ -28,6 +29,8 @@ const {
 } = require("./handlers/users");
 
 const app = express();
+
+app.use(cors());
 
 //! Screams Route
 
